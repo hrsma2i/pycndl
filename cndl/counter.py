@@ -9,7 +9,10 @@ class TooManyErrorsOccured(Exception):
 
 class Counter:
     def __init__(
-        self, total: int, threshold_errors: int | None = None, log_interval: int = 1
+        self,
+        total: int,
+        log_interval: int = 1,
+        threshold_errors: "int | None" = None,
     ) -> None:
         self._processed = 0
         self._success = 0
@@ -86,7 +89,11 @@ class Counter:
 
 class InterProcessCounter(Counter):
     # https://stackoverflow.com/questions/2080660/python-multiprocessing-and-a-shared-counter  # noqa: E501
-    def __init__(self, total: int, threshold_errors: int | None = None) -> None:
+    def __init__(
+        self,
+        total: int,
+        threshold_errors: "int | None" = None,
+    ) -> None:
         self._total = total
         self._processed = mp.Value("i", 0)  # type: ignore
         self._success = mp.Value("i", 0)  # type: ignore
