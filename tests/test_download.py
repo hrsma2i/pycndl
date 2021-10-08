@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import pytest
 import requests
 from cndl.counter import Counter
-from cndl.download import Input, download_loop
+from cndl.download import Input, concurrent_download
 
 SAMPLE = "sample"
 
@@ -27,7 +27,7 @@ def mock_get(url: str, timeout: int, max_err: int) -> MockResponse:
         return MockResponse()
 
 
-def test_donwload_images(
+def test_concurrent_download(
     monkeypatch: pytest.MonkeyPatch,
 ):
     num_contents = 5
@@ -42,7 +42,7 @@ def test_donwload_images(
     )
 
     with TemporaryDirectory() as tmp_dir:
-        download_loop(
+        concurrent_download(
             inputs=inputs,
             out=tmp_dir,
             counter=Counter(

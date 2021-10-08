@@ -32,7 +32,7 @@ Directory = NewType("Directory", str)
 GcsDir = NewType("GcsDir", str)
 
 
-def download_loop(
+def concurrent_download(
     inputs: list[Input],
     out: "Directory | GcsDir",
     counter: Counter,
@@ -42,7 +42,7 @@ def download_loop(
     with ThreadPoolExecutor() as executor:
         for inp in inputs:
             future = executor.submit(
-                _download,
+                download_single,
                 inp=inp,
                 out=out,
                 max_retry=max_retry,
@@ -58,7 +58,7 @@ def download_loop(
     )
 
 
-def _download(
+def download_single(
     inp: Input,
     out: "Directory | GcsDir",
     max_retry: int,
