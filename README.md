@@ -17,7 +17,7 @@
 $ pip install git+https://github.com/hrsma2i/pycndl.git
 ```
 
-# Docker
+## Docker
 
 ```bash
 $ docker pull ghcr.io/hrsma2i/pycndl
