@@ -102,7 +102,7 @@ def concurrent_download(
     counter: Counter,
     max_retry: int = 2,
 ) -> None:
-    client = Client()
+    client = _get_client()
 
     futures: list[Future] = []
     with ThreadPoolExecutor() as executor:
@@ -173,6 +173,18 @@ def _save(
     else:
         with (Path(out) / basename).open("wb") as f:
             f.write(res.content)
+
+
+def _get_client() -> Client:
+    # Avoid Connection pool is full, discarding connection.
+    # https://github.com/googleapis/python-storage/issues/253
+    client = Client()
+    adapter = requests.adapters.HTTPAdapter(
+        pool_connections=128, pool_maxsize=128, max_retries=3, pool_block=True
+    )
+    client._http.mount("https://", adapter)
+    client._http._auth_request.session.mount("https://", adapter)
+    return client
 
 
 if __name__ == "__main__":
