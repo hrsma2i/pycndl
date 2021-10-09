@@ -45,19 +45,34 @@ def main() -> None:
 
 
 def download_from_json(
-    input_json: Path,
-    out: str = typer.Argument(..., help="out local directory path or GCS URI"),
+    input_json: Path = typer.Argument(
+        ..., help="JSON(Lines) which must have url(, filename) as its fields."
+    ),
+    out: str = typer.Argument(..., help="local directory path or GCS URI"),
     max_retry: int = typer.Option(2),
 ) -> None:
     """
     Example:
 
-    cndl input.json /tmp/downloaded 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
+        cndl input.json ./downloaded/ 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
 
 
-    You can retry for failed urls directly using the log file as the next input:
+    Retry:
 
-    cndl log-YYYYmmddHHMMSS.jsonlines /tmp/downloaded 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
+        cat log-YYYYmmddHHMMSS.jsonlines | grep 'failed to retry downloading' | jq -c {"url": .url} > input-`date +%Y%m%d%H%M%S`.jsonlines\n
+        cndl input-YYYYmmddHHMMSS.jsonlines ./downloaded/ 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
+
+    input.json:
+
+        [\n
+            {\n
+                "url": "http://example_1.jpg"\n
+            },\n
+            {\n
+                "url": "http://example_2.png"\n
+            },\n
+            ...\n
+        ]\n
     """  # noqa: E501
     df = pd.read_json(input_json, lines="jsonl" in input_json.suffix)
     inputs: list[Input] = df.apply(lambda row: Input.from_dict(row), axis=1).tolist()
