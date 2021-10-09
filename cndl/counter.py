@@ -11,12 +11,12 @@ class Counter:
     def __init__(
         self,
         total: int,
-        log_interval: int = 1,
+        progress_interval: int = 1,
         threshold_errors: "int | None" = None,
     ) -> None:
         self._processed = 0
         self._success = 0
-        self._log_interval = log_interval
+        self._log_interval = progress_interval
         self._total = total
         self._start_at = time.perf_counter()
         self._cond_processed = Condition()
