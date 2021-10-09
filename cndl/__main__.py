@@ -1,3 +1,4 @@
+import io
 import threading
 import traceback
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
@@ -5,9 +6,10 @@ from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import NewType
 
-import typer
 import pandas as pd
 import requests
+import typer
+from google.cloud.storage import Blob, Client
 from requests.models import Response
 
 from cndl.counter import Counter
@@ -56,6 +58,8 @@ def download_from_json(
 
         cndl input.json ./downloaded/ 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
 
+        cndl input.json gs://bucket/downloaded 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
+
 
     Retry:
 
@@ -98,6 +102,8 @@ def concurrent_download(
     counter: Counter,
     max_retry: int = 2,
 ) -> None:
+    client = Client()
+
     futures: list[Future] = []
     with ThreadPoolExecutor() as executor:
         for inp in inputs:
@@ -107,6 +113,7 @@ def concurrent_download(
                 out=out,
                 max_retry=max_retry,
                 counter=counter,
+                client=client,
             )
             futures.append(future)
 
@@ -123,6 +130,7 @@ def download_single(
     out: "Directory | GcsDir",
     max_retry: int,
     counter: Counter,
+    client: Client,
 ) -> None:
     for i in range(max_retry + 1):
         try:
@@ -132,7 +140,7 @@ def download_single(
             res = requests.get(url, timeout=30)
             res.raise_for_status()
 
-            _save(res, out, basename)
+            _save(res, out, basename, client)
 
             counter.update_success(1)
             break
@@ -152,9 +160,16 @@ def download_single(
     counter.raise_for_many_errors()
 
 
-def _save(res: Response, out: "Directory | GcsDir", basename: str):
+def _save(
+    res: Response,
+    out: "Directory | GcsDir",
+    basename: str,
+    client: Client = None,
+):
     if out.startswith("gs://"):
-        raise NotImplementedError
+        blob: Blob = Blob.from_string(f"{out.rstrip('/')}/{basename}")
+        buf = io.BytesIO(res.content)
+        blob.upload_from_file(buf, client=client)
     else:
         with (Path(out) / basename).open("wb") as f:
             f.write(res.content)

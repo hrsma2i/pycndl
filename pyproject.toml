@@ -11,6 +11,7 @@ requests = "^2.26.0"
 python-json-logger = "^2.0.2"
 typer = "^0.4.0"
 pandas = "^1.3.3"
+google-cloud-storage = "^1.42.3"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"

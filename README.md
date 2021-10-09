@@ -73,6 +73,12 @@ You can rename files to download, setting `filename` field:
 `http://example_1.jpg` will be downloaded as `./downloaded/foo_1.jpg`.
 
 
+## Upload to GCS
+
+```bash
+cndl input.json gs://bucket/downloaded
+```
+
 ## Retry
 
 Failed URLs are automatically retried `--max-retry` times.
