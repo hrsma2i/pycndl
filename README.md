@@ -26,7 +26,7 @@ $ cndl input.json ./downloaded/ 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
 
 The contents whose URL is in `input.json` are downloaded to `.downloaded/`.
 
-input.json mast have `url` field like:
+input.json must have `url` field like:
 
 ```json
 [
