@@ -52,6 +52,11 @@ def download_from_json(
     ),
     out: str = typer.Argument(..., help="local directory path or GCS URI"),
     max_retry: int = typer.Option(2),
+    max_threads: int = typer.Option(
+        100,
+        help="ThreadPoolExecutor.max_workers. "
+        "The Default value is decided by a performance tuning.",
+    ),
 ) -> None:
     """
     Example:
@@ -93,6 +98,7 @@ def download_from_json(
         out=out,
         counter=Counter(total=len(inputs), progress_interval=100),
         max_retry=max_retry,
+        max_threads=max_threads,
     )
 
 
@@ -101,11 +107,12 @@ def concurrent_download(
     out: "Directory | GcsDir",
     counter: Counter,
     max_retry: int = 2,
+    max_threads: int = 100,
 ) -> None:
     client = _get_client()
 
     futures: list[Future] = []
-    with ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
         for inp in inputs:
             future = executor.submit(
                 download_single,

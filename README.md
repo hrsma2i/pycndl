@@ -107,11 +107,3 @@ You can also retry using the log file as the next input:
 $ cat log-YYYYmmddHHMMSS.jsonlines | grep 'failed to retry downloading' | jq -c {"url": .url} > input-`date +%Y%m%d%H%M%S`.jsonlines
 $ cndl input-YYYYmmddHHMMSS.jsonlines ./downloaded/ 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
 ```
-
-
-# The Number of Threads
-
-Changing the number of threads is not supported yet.
-The default numbers defined in the following document is used.
-
-https://docs.python.org/ja/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
