@@ -73,9 +73,9 @@ You can rename files to download, setting `filename` field:
 `http://example_1.jpg` will be downloaded as `./downloaded/foo_1.jpg`.
 
 
-## Retry for failed URLs
+## Retry
 
-Failed URLs is automatically retried `--max-retry` times.
+Failed URLs are automatically retried `--max-retry` times.
 
 You can also retry using the log file as the next input:
 
