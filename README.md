@@ -11,8 +11,26 @@
 - easy to retry from a log
 # Installation
 
+## Pip
+
 ```bash
 $ pip install git+https://github.com/hrsma2i/pycndl.git
+```
+
+# Docker
+
+```bash
+$ docker pull ghcr.io/hrsma2i/pycndl
+```
+
+Add the followings to your `~/.bashrc`.
+
+```bash
+alias cndl='docker run --rm  -v $HOME:$HOME -w $(pwd) -e GOOGLE_APPLICATION_CREDENTIALS=$HOME/.config/gcloud/application_default_credentials.json -e GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project) ghcr.io/hrsma2i/pycndl cndl'
+```
+
+```bash
+$ source ~/.bashrc
 ```
 
 
