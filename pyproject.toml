@@ -19,6 +19,9 @@ mypy = "^0.910"
 autoflake = "^1.4"
 pytest = "^6.2.5"
 
+[tool.poetry.scripts]
+cndl = "cndl.__main__:main"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

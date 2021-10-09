@@ -40,11 +40,15 @@ Directory = NewType("Directory", str)
 GcsDir = NewType("GcsDir", str)
 
 
-def main(
+def main() -> None:
+    typer.run(download_from_json)
+
+
+def download_from_json(
     input_json: Path,
     out: str = typer.Argument(..., help="out local directory path or GCS URI"),
     max_retry: int = typer.Option(2),
-):
+) -> None:
     """
     Example:
 
@@ -138,4 +142,4 @@ def _save(res: Response, out: "Directory | GcsDir", basename: str):
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    main()
