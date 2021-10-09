@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import pytest
 import requests
 from cndl.counter import Counter
-from cndl.download import Input, concurrent_download
+from cndl.__main__ import Input, concurrent_download
 
 SAMPLE = "sample"
 
