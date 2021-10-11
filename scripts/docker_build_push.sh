@@ -16,3 +16,8 @@ fi
 echo "tag: $TAG"
 docker build -t "$IMAGE:$TAG" "$PRJ_ROOT"
 docker push "$IMAGE:$TAG"
+
+if [ ! "$(git status --porcelain)" ]; then
+    docker tag "$IMAGE:$TAG" "$IMAGE:latest"
+    docker push "$IMAGE:latest"
+fi
