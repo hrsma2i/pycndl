@@ -5,10 +5,14 @@ SCRIPTS_DIR=$(
 )
 PRJ_ROOT=$(dirname "$SCRIPTS_DIR")
 
-IMAGE_URI=ghcr.io/hrsma2i/pycndl
+IMAGE=ghcr.io/hrsma2i/pycndl
 
-GIT_SHA=$(git rev-parse HEAD)
-URI_TAG="$IMAGE_URI:gitsha-$GIT_SHA"
+if [ "$(git status --porcelain)" ]; then
+    TAG='test'
+else
+    TAG=gitsha-$(git rev-parse HEAD)
+fi
 
-docker build -t "$URI_TAG" "$PRJ_ROOT"
-docker push "$URI_TAG"
+echo "tag: $TAG"
+docker build -t "$IMAGE:$TAG" "$PRJ_ROOT"
+docker push "$IMAGE:$TAG"
