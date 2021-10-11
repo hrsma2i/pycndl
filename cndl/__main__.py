@@ -109,7 +109,7 @@ def concurrent_download(
     max_retry: int = 2,
     max_threads: int = 100,
 ) -> None:
-    client = _get_client()
+    client = _get_client() if out.startswith("gs://") else None
 
     futures: list[Future] = []
     with ThreadPoolExecutor(max_workers=max_threads) as executor:
