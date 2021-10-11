@@ -68,6 +68,12 @@ Add the suffix `.jsonl` or `.jsonlines` to an input:
 $ cndl input.jsonlines ./downloaded/
 ```
 
+CSV is also supported.
+
+```bash
+$ cndl input.csv ./downlaoded/
+```
+
 More details:
 
 ```bash

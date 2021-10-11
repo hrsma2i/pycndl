@@ -47,8 +47,9 @@ def main() -> None:
 
 
 def download_from_json(
-    input_json: Path = typer.Argument(
-        ..., help="JSON(Lines) which must have url(, filename) as its fields."
+    input_file: Path = typer.Argument(
+        ...,
+        help="JSON(Lines), CSV which must have url(, filename) as its fields.",
     ),
     out: str = typer.Argument(..., help="local directory path or GCS URI"),
     max_retry: int = typer.Option(2),
@@ -64,6 +65,8 @@ def download_from_json(
         cndl input.json ./downloaded/ 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
 
         cndl input.json gs://bucket/downloaded 2>&1 | tee log-`date +%Y%m%d%H%M%S`.jsonlines
+
+        cndl input.csv ./downloaded/
 
 
     Retry:
@@ -87,7 +90,7 @@ def download_from_json(
 
         https://github.com/hrsma2i/pycndl
     """  # noqa: E501
-    df = pd.read_json(input_json, lines="jsonl" in input_json.suffix)
+    df = _read_df(input_file)
     inputs: list[Input] = df.apply(lambda row: Input.from_dict(row), axis=1).tolist()
 
     if not out.startswith("gs://"):
@@ -100,6 +103,16 @@ def download_from_json(
         max_retry=max_retry,
         max_threads=max_threads,
     )
+
+
+def _read_df(input_file: Path):
+    if "json" in input_file.suffix:
+        df = pd.read_json(input_file, lines="jsonl" in input_file.suffix)
+    elif "csv" in input_file.suffix:
+        df = pd.read_csv(input_file)
+    else:
+        raise ValueError(f"not supported input: {input_file}")
+    return df
 
 
 def concurrent_download(
